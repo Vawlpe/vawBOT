@@ -1,0 +1,2 @@
+# vawBOT
+Personal Discord Bot
