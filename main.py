@@ -20,6 +20,10 @@ client = commands.Bot(
 async def on_ready():
     print("HENTAI FOR ALL")
 
+@client.command()
+async def ping(ctx):
+	await ctx.send(f'Pong! {int(client.latency*1000)}ms')
+
 
 # Here we load our cogs
 if __name__ == '__main__':
