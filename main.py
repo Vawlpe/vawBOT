@@ -4,7 +4,8 @@ from discord.ext import commands
 from datetime import datetime
 import os
 
-TOKEN = open("token.txt").read()
+#TOKEN = open("token.txt").read() #LOCAL TESTING
+TOKEN = os.getenv('TOKEN')
 
 client = commands.Bot(
 	command_prefix = "vaw.",
