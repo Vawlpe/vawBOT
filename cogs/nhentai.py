@@ -3,6 +3,7 @@ from discord.ext import commands, menus
 import asyncio
 
 from hentai import Hentai, Format, Utils
+import nekos
 
 # Menus
 class viewDoujinMenu(menus.Menu):
@@ -12,7 +13,7 @@ class viewDoujinMenu(menus.Menu):
 
     async def send_initial_message(self, ctx, channel):
         # Create Embed...
-        embed=discord.Embed(color=0x850054, 
+        embed=discord.Embed(color=0xE12754, 
             title=self.d.title(Format.Pretty),
             url=self.d.url
         )
@@ -48,7 +49,7 @@ class viewPageMenu(menus.Menu):
 
     async def domsg(self, ctx=None):
         # Create Embed...
-        embed=discord.Embed(color=0x850054, 
+        embed=discord.Embed(color=0xE12754, 
             title=self.d.title(Format.Pretty),
             url=self.d.url
         )
@@ -88,11 +89,15 @@ class viewPageMenu(menus.Menu):
 
 
 # Cogs setup bs
-class NHCog(commands.Cog):
+class HentaiCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
+
+    # NSFW
+    def cog_check(self, ctx):
+        return ctx.channel.is_nsfw()
         
-    # NHVIEW
+    # NHView
     @commands.command()
     async def nhv(self, ctx, *, id=None):
         print(f'NHView {id}...')
@@ -115,9 +120,9 @@ class NHCog(commands.Cog):
             print(f'NHVIEW {id} not found ;-;')
             await ctx.send(f'No Doujin with id: {id} was found\nIf you don\'t have an ID just don\'t write one and we will send you a random doujin :3')
 
-    # NHREAD
+    # NHRead
     @commands.command()
-    async def nhr(self, ctx, *, id, replaceMsg=None):
+    async def nhr(self, ctx, *, id=None):
         print(f'NHREAD {id}...')
 
         # Doujin exists?
@@ -138,6 +143,22 @@ class NHCog(commands.Cog):
             print(f'NHREAD {id} not found ;-;')
             await ctx.send(f'No Doujin with id: {id} was found\nIf you don\'t have an ID just don\'t write one and we will send you a random doujin :3')
 
+    # NekosLife
+    @commands.command()
+    async def nl(self, ctx, *, tag):
+        print(f'NekosLife {tag}...')
+        pic = nekos.img(tag)
+
+        # Create Embed...
+        embed=discord.Embed(color=0xC54EAD, 
+            title=tag,
+            url=pic
+        )
+        embed.set_thumbnail(url='https://nekos.life/static/icons/favicon-194x194.png') # Nekos.life Logo
+        embed.set_image(url=pic)
+        embed.set_footer(text=f'nekos.life: {tag}')
+        await ctx.send(embed=embed)
+
 # More cogs setup bs
 def setup(client):
-    client.add_cog(NHCog(client))
+    client.add_cog(HentaiCommands(client))
