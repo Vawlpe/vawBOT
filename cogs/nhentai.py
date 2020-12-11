@@ -1,6 +1,5 @@
 import discord
-from discord.ext import commands
-from discord.ext import menus
+from discord.ext import commands, menus
 import asyncio
 
 from hentai import Hentai, Format, Utils
@@ -15,12 +14,20 @@ class viewDoujinMenu(menus.Menu):
         # Create Embed...
         embed=discord.Embed(color=0x850054, 
             title=self.d.title(Format.Pretty),
-            url=self.d.url,
-            description=f"Artists: {', '.join(artist.name for artist in self.d.artist)}\nTags: {', '.join(tag.name for tag in self.d.tag)}"
+            url=self.d.url
         )
-        embed.set_thumbnail(url='https://i.imgur.com/uLAimaY.png')
+        embed.set_thumbnail(url='https://i.imgur.com/uLAimaY.png') # NH Logo
         embed.set_image(url=self.d.cover)
-        embed.add_field(name='Read',value=':book: REACT BELLOW')
+
+        if self.d.artist: embed.add_field(name='Artist',value=f"{', '.join(artist.name for artist in self.d.artist)}")
+        if self.d.language: embed.add_field(name='Language',value=f"{', '.join(lang.name for lang in self.d.language)}")
+        if self.d.group: embed.add_field(name='Group',value=f"{', '.join(group.name for group in self.d.group)}")
+        if self.d.parody: embed.add_field(name='Parody',value=f"{', '.join(parody.name for parody in self.d.parody)}")
+        if self.d.category: embed.add_field(name='Category',value=f"{', '.join(cat.name for cat in self.d.category)}")
+        if self.d.character: embed.add_field(name='Characters',value=f"{', '.join(char.name for char in self.d.character)}")
+        if self.d.tag: embed.add_field(name='Tags',value=f"{', '.join(tag.name for tag in self.d.tag)}",inline=False)
+
+        embed.add_field(name='Read',value=':book: React To Read')
         embed.add_field(name='Download',value=f'[:inbox_tray: Torrent](https://nhentai.net/login/?next=%2Fg%2F{self.d.id}%2Fdownload)')
         embed.add_field(name='Favorite',value=f'[:star: {self.d.num_favorites}](https://nhentai.net/login/?next=%2Fg%2F{self.d.id}%2F)')
         embed.set_footer(text=f'ID: {self.d.id} | {self.d.num_pages} Pages')
@@ -112,7 +119,24 @@ class NHCog(commands.Cog):
     @commands.command()
     async def nhr(self, ctx, *, id, replaceMsg=None):
         print(f'NHREAD {id}...')
-        await viewPageMenu().start(ctx, d=Hentai(id))
+
+        # Doujin exists?
+        if Hentai.exists(id):
+                d = Hentai(id)
+                print(f'NHREAD {id} found')
+                await viewPageMenu().start(ctx, d)
+        # No ID? Send random
+        elif id is None:
+            print(f'NHREAD No ID; Sending random')
+            await ctx.send('No ID passed, getting random doujin...')
+            await viewPageMenu().start(ctx, Utils.get_random_hentai())
+        # ID not digits
+        elif not id.isdigit():
+            print(f'NHREAD Invalid ID')
+            await ctx.send('Invalid ID\nIDs are usually 6 digit numbers, although there are some 5 digin and even shorter or longer IDs\nIf you don\'t have an ID just don\'t write one and we will send you a random doujin :3')
+        else:
+            print(f'NHREAD {id} not found ;-;')
+            await ctx.send(f'No Doujin with id: {id} was found\nIf you don\'t have an ID just don\'t write one and we will send you a random doujin :3')
 
 # More cogs setup bs
 def setup(client):
