@@ -49,7 +49,7 @@ class viewPageMenu(menus.Menu):
 
     async def domsg(self, ctx=None):
         # Create Embed...
-        embed=discord.Embed(color=0xE12754, 
+        embed=discord.Embed(color=0xE12754,
             title=self.d.title(Format.Pretty),
             url=self.d.url
         )
@@ -86,17 +86,37 @@ class viewPageMenu(menus.Menu):
         self.page=self.d.num_pages-1
         await self.domsg()
 
+class viewDoujinListMenu(menus.Menu):
+    async def start(self, ctx, doujinList):
+        self.doujinList=doujinList
+        await super().start(ctx)
 
+    async def domsg(self, ctx=None):
+        # Create Embed...
+        embed=discord.Embed(color=0xE12754, title='Results')
+        embed.set_thumbnail(url='https://i.imgur.com/uLAimaY.png') # NH Logo
+        for d in self.doujinList:
+            embed.add_field(name=f'{d.id}: ', value=f'{d.title(Format.Pretty)}', inline=False)
+
+        embed.set_footer(text=f'{self.page+1}/{self.d.num_pages} Pages')
+
+        if self.message is None:
+            return await ctx.send(embed=embed)
+        else:
+            await self.message.edit(embed=embed)
+
+    async def send_initial_message(self, ctx, channel):
+        return await self.domsg(ctx)
 
 # Cogs setup bs
 class HentaiCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    # NSFW
-    def cog_check(self, ctx):
+    async def cog_check(self, ctx):
+        if not ctx.channel.is_nsfw(): await ctx.channel.send("NSFW Commands can only run in NSFW channels.")
         return ctx.channel.is_nsfw()
-        
+
     # NHView
     @commands.command()
     async def nhv(self, ctx, *, id=None):

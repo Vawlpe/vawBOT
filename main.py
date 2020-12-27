@@ -5,8 +5,8 @@ from datetime import datetime
 import requests
 import os
 
-#TOKEN = open("token.txt").read() #LOCAL TESTING
-TOKEN = os.getenv('TOKEN') # Heroku
+TOKEN = open("../token.txt").read() #LOCAL TESTING
+#TOKEN = os.getenv('TOKEN') # Heroku
 
 client = commands.Bot(
 	command_prefix = "vaw.",
