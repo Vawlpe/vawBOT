@@ -4,6 +4,7 @@ import asyncio
 
 from hentai import Hentai, Format, Utils
 import nekos
+from luscious_dl import album as lalbum
 
 # Menus
 class viewDoujinMenu(menus.Menu):
@@ -108,6 +109,48 @@ class viewDoujinListMenu(menus.Menu):
     async def send_initial_message(self, ctx, channel):
         return await self.domsg(ctx)
 
+class viewLAlbumMenu(menus.Menu):
+    async def start(self, ctx, a):
+        self.a=a
+        self.page=0
+        await super().start(ctx)
+
+    async def domsg(self, ctx=None):
+        # Create Embed...
+        embed=discord.Embed(color=0xE12754,
+            title=self.a.title
+        )
+        embed.set_thumbnail(url='https://www.luscious.net/assets/logo-192.png') # NH Logo
+        embed.set_image(url=self.a.pictures[self.page])
+        embed.set_footer(text=f'ID: {self.a.id_} | {self.page+1}/{len(self.a.pictures)} Pages')
+        if self.message is None:
+            return await ctx.send(embed=embed)
+        else:
+            await self.message.edit(embed=embed)
+
+    async def send_initial_message(self, ctx, channel):
+        return await self.domsg(ctx)
+
+    @menus.button('⏮️')
+    async def on_start(self, payload):
+        self.page=0
+        await self.domsg()
+
+    @menus.button('⬅️')
+    async def on_prev(self, payload):
+        self.page=max(0, min(self.page-1, len(self.a.pictures)-1))
+        await self.domsg()
+
+    @menus.button('➡️')
+    async def on_next(self, payload):
+        self.page=max(0, min(self.page+1, len(self.a.pictures)-1))
+        await self.domsg()
+
+    @menus.button('⏭️')
+    async def on_end(self, payload):
+        self.page=len(self.a.pictures)-1
+        await self.domsg()
+
 # Cogs setup bs
 class HentaiCommands(commands.Cog):
     def __init__(self, client):
@@ -178,6 +221,14 @@ class HentaiCommands(commands.Cog):
         embed.set_image(url=pic)
         embed.set_footer(text=f'nekos.life: {tag}')
         await ctx.send(embed=embed)
+
+    @commands.command()
+    async def lctest(self, ctx, *, id):
+        album = lalbum.Album(id)
+        album.fetch_pictures()
+        album.fetch_info()
+
+        await viewLAlbumMenu().start(ctx, album)
 
 # More cogs setup bs
 def setup(client):
