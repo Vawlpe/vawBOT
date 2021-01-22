@@ -58,18 +58,5 @@ class AdminCommands(commands.Cog):
         guild = ctx.guild
         await guild.leave()
 
-    @commands.command(name='bonkhorny')
-    @commands.has_permissions(manage_channels=True)
-    @commands.is_owner()
-    async def bonkhorny(self, ctx, channel: discord.TextChannel, role: discord.Role):
-        url = 'https://api.jsonbin.io/v3/b/5fd40dd1fbb23c2e36a5a16c'
-        old = requests.get(url+"/latest").json()['record']
-        data = old + [{
-            "channel": f"{channel.id}",
-            "role": f"{role.id}",
-            "users": {}
-            }]
-        requests.put(url, json=data, headers={'Content-Type': 'application/json'})
-            
 def setup(bot):
     bot.add_cog(AdminCommands(bot))
