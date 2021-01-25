@@ -3,13 +3,14 @@ from discord.ext import menus
 import asyncio
 
 class ReadMenu(menus.Menu):
-    async def start(self, ctx, title=None, url=None, color=None, thumbnail=None, page=None, footerFormat=None, extra_fields=None, totalPages=None, imgURLs=None, imgURLbase=None, showbtns={True,False,True,True,False,True}, init=None, proc=None):
+    async def start(self, ctx, title=None, url=None, color=None, thumbnail=None, page=None, footerFormat='{page}/{total_pages}', footerExtra='', extra_fields=None, totalPages=None, imgURLs=None, imgURLbase=None, showbtns={True,False,True,True,False,True}, init=None, proc=None):
         self.title=title
         self.url=url
         self.color=color
         self.thumbnail=thumbnail
         self.page=page
         self.footerFormat=footerFormat
+        self.footerExtra=footerExtra
         self.extra_fields=extra_fields
         self.totalPages=totalPages
         self.imgURLs=imgURLs
@@ -58,7 +59,7 @@ class ReadMenu(menus.Menu):
             for f in self.extra_fields:
                 embed.add_field(**f)
 
-        embed.set_footer(text=self.footerFormat.format(other='',page=self.page, total_pages=self.totalPages))
+        embed.set_footer(text=self.footerFormat.format(other=self.footerExtra ,page=self.page, total_pages=self.totalPages))
 
         # Send or Edit
         if self.message is None:

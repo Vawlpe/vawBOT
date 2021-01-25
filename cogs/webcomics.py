@@ -38,9 +38,9 @@ class WebcomicCommands(commands.Cog):
     			color=0x72ceef,
     			thumbnail='https://i.imgur.com/YVMsQJ3.png',
     			page=page,
-    			footerFormat='{other}{page}/{total_pages}',
+    			footerFormat='{page}/{total_pages}',
     			imgURLbase='https://twokinds.keenspot.com/comic/',
-                showbtns=[True,True,True,True,True,True],
+                showbtns=[True]*6,
                 init=self.twokinds_init,
     			proc=self.twokinds_proc
     		)
