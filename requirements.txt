@@ -1,5 +1,9 @@
+requests
+beautifulsoup4
+
 discord.py
 git+https://github.com/Rapptz/discord-ext-menus
+
 hentai
 nekos.py
 luscious-downloader
