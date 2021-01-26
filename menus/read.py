@@ -33,7 +33,7 @@ class ReadMenu(menus.Menu):
         if self.imgURLs is not None:
             # Use URL list[page]
             embed.set_image(url=self.imgURLs[self.page-1])
-            self.totalPages=len(imgURLs)
+            self.totalPages=len(self.imgURLs)
         elif self.proc is None:
             # Use URL base/page
             embed.set_image(url=f'{self.imgURLbase}{self.page}')
@@ -68,13 +68,13 @@ class ReadMenu(menus.Menu):
             await self.message.edit(embed=embed)
 
     async def send_initial_message(self, ctx, channel):
-        proc = await self.init(self.imgURLbase, self.page)
+        if self.init is not None:
+            proc = await self.init(self.imgURLbase, self.page)
+            if proc['totalPages'] is not None:
+                self.totalPages=proc['totalPages']
 
-        if proc['totalPages'] is not None:
-            self.totalPages=proc['totalPages']
-
-        if proc['chfpg'] is not None:
-            self.chfpg=proc['chfpg']
+            if proc['chfpg'] is not None:
+                self.chfpg=proc['chfpg']
 
         return await self.domsg(ctx)
 
