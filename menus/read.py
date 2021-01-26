@@ -3,7 +3,7 @@ from discord.ext import menus
 import asyncio
 
 class ReadMenu(menus.Menu):
-    async def start(self, ctx, title=None, url=None, color=None, thumbnail=None, page=None, footerFormat='{page}/{total_pages}', footerExtra='', extra_fields=None, totalPages=None, imgURLs=None, imgURLbase=None, showbtns={True,False,True,True,False,True}, init=None, proc=None):
+    async def start(self, ctx, title=None, url=None, color=None, thumbnail=None, page=None, footerFormat='{page}/{total_pages} Pages', footerExtra='', extra_fields=None, totalPages=None, imgURLs=None, imgURLbase=None, showbtns={True,False,True,True,False,True}, init=None, proc=None):
         self.title=title
         self.url=url
         self.color=color
@@ -21,7 +21,9 @@ class ReadMenu(menus.Menu):
         await super().start(ctx)
 
     async def domsg(self, ctx=None):
-        # Create Embed...
+        if self.proc is not None:
+            processed=await self.proc(self.imgURLbase, self.page)
+
         embed=discord.Embed(
             color=self.color,
             title=self.title,
@@ -34,12 +36,11 @@ class ReadMenu(menus.Menu):
             # Use URL list[page]
             embed.set_image(url=self.imgURLs[self.page-1])
             self.totalPages=len(self.imgURLs)
-        elif self.proc is None:
+        elif processed is None:
             # Use URL base/page
             embed.set_image(url=f'{self.imgURLbase}{self.page}')
         else:
             # Proc URL base/page
-            processed=await self.proc(self.imgURLbase, self.page)
             embed.set_image(url=processed['url'])
             if processed['title'] is not None:
                 embed.title=processed['title']
