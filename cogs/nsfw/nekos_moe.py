@@ -10,12 +10,12 @@ import menus.view as viewmenu
 
 # Nekos.moe
 @commands.command()
-async def nm(self, ctx):
-    print(f'Nekos.moe...')
+async def nm(self, ctx, *, nsfw=True):
+    print(f'Nekos.moe... {nsfw}')
 
     nyan = Neko()
     kw = {
-        'nsfw': True,
+        'nsfw': nsfw,
         'count': 1
     }
 
@@ -31,3 +31,11 @@ async def nm(self, ctx):
     }
 
     return await viewmenu.ViewMenu().start(ctx, **info)
+
+@commands.command()
+async def nmlewd(self, ctx):
+    return await nm(self, ctx, nsfw=True)
+
+@commands.command()
+async def nmsafe(self, ctx):
+    return await nm(self, ctx, nsfw=False)

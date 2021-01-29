@@ -10,7 +10,7 @@ class HentaiCommands(commands.Cog):
     from .nsfw.nhentai import nhv, nhr
     from .nsfw.luscious import lctest
     from .nsfw.nekos_life import nl
-    from .nsfw.nekos_moe import nm
+    from .nsfw.nekos_moe import nm, nmsafe, nmlewd
 
     async def cog_check(self, ctx):
         return ctx.channel.is_nsfw()
