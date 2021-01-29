@@ -4,14 +4,14 @@ import asyncio
 
 
 class ViewMenu(menus.Menu):
-    async def start(self, ctx, title=None, url=None, color=None, thumbnail=None, cover=None, footerFormat='{other}', footerExtra=None, extra_fields=None, showreadbtn=None, init=None, proc=None, read=None, readargs=None):
+    async def start(self, ctx, title=None, url=None, color=None, thumbnail=None, cover=None, footerFormat='{other}', footerText='Default footerText', extra_fields=None, showreadbtn=False, init=None, proc=None, read=None, readargs=None):
         self.title=title
         self.url=url
         self.color=color
         self.thumbnail=thumbnail
         self.cover=cover
         self.footerFormat=footerFormat
-        self.footerExtra=footerExtra
+        self.footerText=footerText
         self.extra_fields=extra_fields
         self.showreadbtn=showreadbtn
         self.init=init
@@ -35,7 +35,7 @@ class ViewMenu(menus.Menu):
                 if f is not None:
                     embed.add_field(**f)
 
-        embed.set_footer(text=self.footerFormat.format(other=self.footerExtra))
+        embed.set_footer(text=self.footerFormat.format(other=self.footerText))
 
         return await ctx.send(embed=embed)
 
