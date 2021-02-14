@@ -4,7 +4,6 @@ import os
 
 import discord
 from discord.ext import commands
-from pretty_help import PrettyHelp
 
 TOKEN = open("../token.txt").read() #LOCAL TXT FILE
 #TOKEN = os.getenv('TOKEN') # ENV VAR	
@@ -12,7 +11,6 @@ TOKEN = open("../token.txt").read() #LOCAL TXT FILE
 client = commands.Bot(
 	command_prefix = "vaw.",
 	description="Positively Lewd Hentai God",
-	help_command=PrettyHelp(active_time=180),
 	activity=discord.Activity(
 		name="Hentai",
 		type=discord.ActivityType.watching
