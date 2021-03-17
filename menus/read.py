@@ -22,7 +22,7 @@ class ReadMenu(menus.Menu):
 
     async def domsg(self, ctx=None):
         if self.proc is not None:
-            processed=await self.proc(self.imgURLbase, self.page)
+            processed=await self.proc(self,self.imgURLbase, self.page)
 
         embed=discord.Embed(
             color=self.color,
@@ -49,7 +49,7 @@ class ReadMenu(menus.Menu):
                 self.extra_fields=processed['extra_fields']
 
             for i, ch in enumerate(self.chfpg):
-                if self.chfpg[i]>self.page:
+                if ch>self.page:
                     self.currch=i-1
                     break
 
@@ -70,7 +70,7 @@ class ReadMenu(menus.Menu):
 
     async def send_initial_message(self, ctx, channel):
         if self.init is not None:
-            proc = await self.init(self.imgURLbase, self.page)
+            proc = await self.init(self,self.imgURLbase, self.page)
             if proc['totalPages'] is not None:
                 self.totalPages=proc['totalPages']
 

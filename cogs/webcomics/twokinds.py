@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import asyncio
 
+import menus.read as readmenu
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -35,6 +37,6 @@ async def twokinds(self, ctx, *, page=0):
 			footerFormat='{page}/{total_pages}',
 			imgURLbase='https://twokinds.keenspot.com/comic/',
             showbtns=[True]*6,
-            init=self.twokinds_init,
-			proc=self.twokinds_proc
+            init=twokinds_init,
+			proc=twokinds_proc
 		)
