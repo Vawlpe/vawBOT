@@ -49,7 +49,7 @@ async def nhr(self, ctx, *, id=None):
 
 
 # NHView
-@commands.command()
+@commands.command(help="UwU Fuck me harder daddy~ :hot_face: <:jaeeGasm:731939550959632464>")
 async def nhv(self, ctx, *, id=None):
     print(f'NHView {id}...')
 
