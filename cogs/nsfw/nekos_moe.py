@@ -31,11 +31,3 @@ async def nm(self, ctx, *, nsfw=True):
     }
 
     return await viewmenu.ViewMenu().start(ctx, **info)
-
-@commands.command()
-async def nmlewd(self, ctx):
-    return await nm(self, ctx, nsfw=True)
-
-@commands.command()
-async def nmsafe(self, ctx):
-    return await nm(self, ctx, nsfw=False)
