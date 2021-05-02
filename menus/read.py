@@ -22,7 +22,7 @@ class ReadMenu(menus.Menu):
 
     async def domsg(self, ctx=None):
         if self.proc is not None:
-            processed=await self.proc(self,self.imgURLbase, self.page)
+            processed=await self.proc(self, self.imgURLbase, self.page)
 
         embed=discord.Embed(
             color=self.color,
@@ -37,7 +37,7 @@ class ReadMenu(menus.Menu):
             embed.set_image(url=self.imgURLs[self.page-1])
             self.totalPages=len(self.imgURLs)
         elif processed is None:
-            # Use URL base/page
+            # Use URL base+page
             embed.set_image(url=f'{self.imgURLbase}{self.page}')
         else:
             # Proc URL base/page
@@ -48,13 +48,19 @@ class ReadMenu(menus.Menu):
             if processed['extra_fields'] is not None:
                 self.extra_fields=processed['extra_fields']
 
-            for i, ch in enumerate(self.chfpg):
-                if ch>self.page:
-                    self.currch=i-1
-                    break
+            if self.page==0:
+                self.page=self.totalPages
 
-        if self.page==0:
-                    self.page=self.totalPages
+            if self.page==self.totalPages:
+                *_, last = self.chfpg
+                self.currch=last
+            elif self.page==1:
+                self.currch=self.chfpg[0]
+            else:
+                for i,ch in enumerate(self.chfpg):
+                    if self.chfpg[i]>self.page:
+                        self.currch=i-1
+                        break
 
         if self.extra_fields is not None:
             for f in self.extra_fields:
@@ -104,7 +110,7 @@ class ReadMenu(menus.Menu):
 
     @menus.button('⏪',skip_if=show_prevch)
     async def on_prevch(self, payload):
-        self.page=max(1, min(self.chfpg[self.currch-1], self.totalPages))
+        self.page=max(1, min(self.chfpg[self.currch], self.totalPages))
         await self.domsg()
 
     @menus.button('⬅️',skip_if=show_prev)

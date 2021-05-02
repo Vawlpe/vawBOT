@@ -15,7 +15,7 @@ async def twokinds_init(self, url, page):
 
     chfpg = {}
     for i, ch in enumerate(chapters):
-        chfpg[i]=int(ch.find(class_='chapter-links').find(class_='jsdep')['href'].replace('/','').replace('comic',''))
+        chfpg[i]=int(ch.find(class_='chapter-links').find('a')['href'].replace('/','').replace('comic',''))
 
     return {'totalPages':total_pages, 'chfpg':chfpg}
 
