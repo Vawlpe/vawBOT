@@ -1,8 +1,13 @@
+# Utils
 requests
 beautifulsoup4
 asyncio
+
+# Discord
 discord.py
 git+https://github.com/Rapptz/discord-ext-menus
+
+# API Libraries
 hentai
 nekos.py
 PyNekos

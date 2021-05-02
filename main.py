@@ -104,24 +104,9 @@ async def loglevel(ctx, *, level="info"):
 	print("\u001b[33m" + f"Log level set to: {level.upper()}" + "\u001b[37m")
 	await ctx.send(embed=embed)
 
-
-# @client.command()
-# async def donate(ctx):
-#	 embed = discord.Embed(
-#		 title="",
-#		 description="",
-#		 colour=discord.Colour.purple()
-#	 )
-
-#	 embed.add_field(name="BTC Address", value="1NysQzjm6SqiA6um4xC2hd1hurKLJ4pfSc", inline=False)
-#	 embed.add_field(name="ETH Address", value="0x8fc61280e373594ae02FD252da683b5B43Ef4C74", inline=False)
-
-#	 await ctx.send(embed=embed)
-
-
 for filename in os.listdir("cogs"):
 	if filename.endswith(".py"):
 		client.load_extension(f"cogs.{filename[:-3]}")
 
-token = open("token.txt", "r").readline()
-client.run(token)
+tokens = open("tokens.txt", "r").readlines()
+client.run(tokens[0])
