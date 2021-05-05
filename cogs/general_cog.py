@@ -1,11 +1,27 @@
 import discord
 from discord.ext import commands
 import asyncio
+import json
 
 
-class GeneralCommands(commands.Cog):
+class general(commands.Cog):
 	def __init__(self, client):
 		self.client = client
+
+	def cog_check(self, ctx):
+		with open("cfg.json") as f:
+			c = json.load(f)
+
+		if not str(ctx.guild.id) in c:
+			cfg=c["default"]
+		else:
+			cfg=c[str(ctx.guild.id)]
+
+		allcfg=c["all"]
+
+		# Some of this logic may be redundant but i got rly confused so i just wrote a truth table and converted it to a K-map
+		return (not "general" in cfg["cog_blacklist"] and not "general" in allcfg["cog_blacklist"]) or (
+			not "general" in cfg["cog_blacklist"] and "general" in cfg["cog_whitelist"])
 
 	@commands.command()
 	async def ping(self, ctx):
@@ -89,4 +105,4 @@ class GeneralCommands(commands.Cog):
 
 
 def setup(client):
-	client.add_cog(GeneralCommands(client))
+	client.add_cog(general(client))

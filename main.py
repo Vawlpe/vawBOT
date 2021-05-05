@@ -3,17 +3,32 @@ import discord
 import logging
 from discord.ext import commands
 from datetime import datetime
+import json
 
 os.system("")
 
+with open("cfg.json") as f:
+	c = json.load(f)
+
+def get_prefix(bot,msg):
+	if not str(msg.guild.id) in c:
+		cfg=c["default"]
+	else:
+		cfg=c[str(msg.guild.id)]
+
+	allcfg=c["all"]
+
+	return commands.when_mentioned_or(*(cfg["prefixes"]),*(allcfg["prefixes"]))(bot, msg)
+
 intents = discord.Intents.all()
-client = commands.Bot(command_prefix="vaw.",
+client = commands.Bot(
 	description="Positively Lewd Hentai God",
 	activity=discord.Activity(
 		name="Hentai",
 		type=discord.ActivityType.watching
 		),
-	intents=intents
+	intents=intents,
+	command_prefix=get_prefix
 )
 client.remove_command('help')
 
@@ -33,7 +48,6 @@ logger.addHandler(handler)
 @client.event
 async def on_ready():
 	print("\u001b[32m" + "HENTAI FOR ALL @ " + formatTime + " on the " + formatDate + "\u001b[37m")
-
 
 @client.command()
 @commands.is_owner()
