@@ -49,7 +49,7 @@ logger.addHandler(handler)
 async def on_ready():
 	print("\u001b[32m" + "HENTAI FOR ALL @ " + formatTime + " on the " + formatDate + "\u001b[37m")
 
-@client.command()
+@client.command(hidden=True)
 @commands.is_owner()
 async def load(ctx, extension):
 	client.load_extension(f"cogs.{extension}")
@@ -64,7 +64,7 @@ async def load(ctx, extension):
 	await ctx.send(embed=embed)
 
 
-@client.command()
+@client.command(hidden=True)
 @commands.is_owner()
 async def unload(ctx, extension):
 	client.unload_extension(f"cogs.{extension}")
@@ -79,7 +79,7 @@ async def unload(ctx, extension):
 	await ctx.send(embed=embed)
 
 
-@client.command()
+@client.command(hidden=True)
 @commands.is_owner()
 async def reload(ctx, extension):
 	client.unload_extension(f"cogs.{extension}")
@@ -95,7 +95,7 @@ async def reload(ctx, extension):
 	await ctx.send(embed=embed)
 
 
-@client.command()
+@client.command(hidden=True)
 @commands.is_owner()
 async def loglevel(ctx, *, level="info"):
 	levels = {

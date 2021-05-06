@@ -43,8 +43,9 @@ class general(commands.Cog):
 
 			# iterating trough cogs, gathering descriptions
 			cogs_desc = ''
-			for cog in self.client.cogs:
-				cogs_desc += f'`{cog}` {self.client.cogs[cog].__doc__}\n'
+			for name,cog in self.client.cogs.items():
+				if cog.cog_check(ctx):
+					cogs_desc += f'`{name}` {self.client.cogs[name].__doc__}\n'
 
 			# adding 'list' of cogs to embed
 			emb.add_field(name='Modules', value=cogs_desc, inline=False)
@@ -68,7 +69,7 @@ class general(commands.Cog):
 			# iterating trough cogs
 			for cog in self.client.cogs:
 				# check if cog is the matching one
-				if cog.lower() == input[0].lower():
+				if cog.cog_check(self,ctx) and cog.lower() == input[0].lower():
 
 					# making title - getting description from doc-string below class
 					emb = discord.Embed(title=f'{cog} - Commands', description=self.client.cogs[cog].__doc__,
