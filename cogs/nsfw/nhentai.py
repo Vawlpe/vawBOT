@@ -1,80 +1,46 @@
 import discord
 from discord.ext import commands, menus
 import asyncio
-
 from hentai import Hentai, Format, Utils
 
 import menus.read as readmenu
 import menus.view as viewmenu
 
-# NHRead
-@commands.command()
-async def nhr(self, ctx, *, id=None):
-    print(f'NHREAD {id}...')
-
+async def nh(menu):
+    id=menu.extraProcVars['id']
     # No ID? Send random
     if id is None:
-        print(f'NHREAD No ID; Sending random')
         await ctx.send('No ID passed, getting random doujin...')
         d = Utils.get_random_hentai()
     # ID not digits
     elif not id.isdigit():
-        print(f'NHREAD Invalid ID')
-        await ctx.send('Invalid ID\nIDs are usually 6 digit numbers, although there are some 5 digin and even shorter or longer IDs\nIf you don\'t have an ID just don\'t write one and we will send you a random doujin :3')
+        await ctx.send('Invalid ID\nIDs are usually 6 digit numbers, although there are some 5 digin and even shorter or longer IDs\nIf you don\'t have an ID just don\'t write one and we will send you a random doujin or use the nhs command to search or nhh command to view the current home page')
     # Does Doujin exist?
     elif Hentai.exists(id):
         d = Hentai(id)
-        print(f'NHREAD {id} found')
     else:
-        print(f'NHREAD {id} not found ;-;')
-        await ctx.send(f'No Doujin with id: {id} was found\nIf you don\'t have an ID just don\'t write one and we will send you a random doujin :3')
+        await ctx.send(f'No Doujin with id: {id} was found\n\nIf you don\'t have an ID just don\'t write one and we will send you a random doujin or use the nhs command to search or nhh command to view the current home page')
 
-    info={
+    return d
+
+async def nhr_init(menu):
+    d=await nh(menu)
+    return {
         'title':d.title(Format.Pretty),
         'url':d.url,
-        'color':0xE12754,
-        'thumbnail':'https://i.imgur.com/uLAimaY.png',
-        'page':1,
-        'footerFormat':'{other}{page}/{total_pages}',
         'footerExtra':f'ID: {d.id} | ',
         'extra_fields':[
             {'name':'Download','value':f'[:inbox_tray: Torrent](https://nhentai.net/login/?next=%2Fg%2F{d.id}%2Fdownload)'},
             {'name':'Favorite','value':f'[:star: {d.num_favorites}](https://nhentai.net/login/?next=%2Fg%2F{d.id}%2F)'}
         ],
         'imgURLs':d.image_urls,
-        'showbtns':[True,False,True]*2
     }
 
-    return await readmenu.ReadMenu().start(ctx, **info)
-
-
-# NHView
-@commands.command(help="UwU Fuck me harder daddy~ :hot_face: <:jaeeGasm:731939550959632464>")
-async def nhv(self, ctx, *, id=None):
-    print(f'NHView {id}...')
-
-    # No ID? Send random
-    if id is None:
-        print(f'NHVIEW No ID; Sending random')
-        await ctx.send('No ID passed, getting random doujin...')
-        d=Utils.get_random_hentai()
-    # ID not digits
-    elif not id.isdigit():
-        print(f'NHVIEW Invalid ID')
-        await ctx.send('Invalid ID\nIDs are usually 6 digit numbers, although there are some 5 digin and even shorter or longer IDs\nIf you don\'t have an ID just don\'t write one and we will send you a random doujin :3')
-    # Doujin exists?
-    elif Hentai.exists(id):
-            d = Hentai(id)
-            print(f'NHVIEW {id} found')
-    else:
-        print(f'NHVIEW {id} not found ;-;')
-        await ctx.send(f'No Doujin with id: {id} was found\nIf you don\'t have an ID just don\'t write one and we will send you a random doujin :3')
-
-    info={
+async def nhv_init(menu):
+    d=await nh(menu)
+    return {
         'title':d.title(Format.Pretty),
         'url':d.url,
-        'color':0xE12754,
-        'thumbnail':'https://i.imgur.com/uLAimaY.png',
         'cover':d.cover,
         'footerText':f'ID: {d.id} | {d.num_pages} Pages',
         'extra_fields':[
@@ -90,9 +56,35 @@ async def nhv(self, ctx, *, id=None):
             {'name':'Download','value':f'[:inbox_tray: Torrent](https://nhentai.net/login/?next=%2Fg%2F{d.id}%2Fdownload)'},
             {'name':'Favorite','value':f'[:star: {d.num_favorites}](https://nhentai.net/login/?next=%2Fg%2F{d.id}%2F)'}
         ],
+        'readargs': {'ctx':menu.extraProcVars['ctx'], 'id':d.id}
+    }
+
+# NHRead
+@commands.command()
+async def nhr(self, ctx, *, id=None):
+    info={
+        'color':0xE12754,
+        'thumbnail':'https://i.imgur.com/uLAimaY.png',
+        'page':1,
+        'footerFormat':'{other}{page}/{total_pages}',
+        'showbtns':[True,False,True]*2,
+        'init':nhr_init,
+        'extraProcVars':{'id':id}
+    }
+
+    return await readmenu.ReadMenu().start(ctx, **info)
+
+
+# NHView
+@commands.command(help="UwU Fuck me harder daddy~ :hot_face: <:jaeeGasm:731939550959632464>")
+async def nhv(self, ctx, *, id=None):
+    info={
+        'color':0xE12754,
+        'thumbnail':'https://i.imgur.com/uLAimaY.png',
         'showreadbtn': True,
         'read':self.nhr,
-        'readargs': {'ctx':ctx, 'id':d.id}
+        'init':nhv_init,
+        'extraProcVars':{'id':id,'ctx':ctx}
     }
 
     return await viewmenu.ViewMenu().start(ctx, **info)

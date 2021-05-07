@@ -1,9 +1,10 @@
 import discord
 from discord.ext import menus
 import asyncio
+import traceback
 
 class ReadMenu(menus.Menu):
-    async def start(self, ctx, title=None, url=None, color=None, thumbnail=None, page=None, footerFormat='{page}/{total_pages} Pages', footerExtra='', extra_fields=None, totalPages=None, imgURLs=None, imgURLbase=None, showbtns={True,False,True,True,False,True}, init=None, proc=None):
+    async def start(self, ctx, title=None, url=None, color=None, thumbnail=None, page=None, footerFormat='{page}/{total_pages} Pages', footerExtra='', extra_fields=None, totalPages=None, imgURLs=None, imgURLbase=None, showbtns={True,False,True,True,False,True}, init=None, proc=None, extraProcVars=None):
         self.title=title
         self.url=url
         self.color=color
@@ -18,17 +19,39 @@ class ReadMenu(menus.Menu):
         self.showbtns=showbtns
         self.init=init
         self.proc=proc
+        self.extraProcVars=extraProcVars
         await super().start(ctx)
 
     async def domsg(self, ctx=None):
-        if self.proc is not None:
-            processed=await self.proc(self, self.imgURLbase, self.page)
-
         embed=discord.Embed(
             color=self.color,
-            title=self.title,
-            url=f'{self.url}{self.page}'
+            title=self.title
         )
+        if self.proc is not None:
+            embed.color=discord.Colour.orange()
+            embed.set_footer(text="⚠️ Processing...")
+            # Send or Edit
+            if self.message is not None:
+                await self.message.edit(embed=embed)
+
+            try:
+                processed=await self.proc(self)
+                for k,v in processed.items():
+                    setattr(self,k,v)
+            except Exception as e:
+                traceback.print_exc()
+                embed.color=discord.Colour.red()
+                embed.set_footer(text=f"🚫 Error!")
+                if self.message is None:
+                    await ctx.send(embed=embed)
+                    return None
+                else:
+                    await self.message.edit(embed=embed)
+
+            embed.color=self.color
+
+
+        embed.url=f'{self.url}{self.page}'
         embed.set_thumbnail(url=self.thumbnail)
 
         # Get the main image
@@ -40,17 +63,13 @@ class ReadMenu(menus.Menu):
             # Use URL base+page
             embed.set_image(url=f'{self.imgURLbase}{self.page}')
         else:
-            # Proc URL base/page
+            # Proc URL
             embed.set_image(url=processed['url'])
-            if processed['title'] is not None:
-                embed.title=processed['title']
 
-            if processed['extra_fields'] is not None:
-                self.extra_fields=processed['extra_fields']
+        if self.page==0:
+            self.page=self.totalPages
 
-            if self.page==0:
-                self.page=self.totalPages
-
+        if hasattr(self, "chfpg"):
             if self.page==self.totalPages:
                 *_, last = self.chfpg
                 self.currch=last
@@ -76,12 +95,25 @@ class ReadMenu(menus.Menu):
 
     async def send_initial_message(self, ctx, channel):
         if self.init is not None:
-            proc = await self.init(self,self.imgURLbase, self.page)
-            if proc['totalPages'] is not None:
-                self.totalPages=proc['totalPages']
+            embed = discord.Embed(color=discord.Colour.orange())
+            embed.set_footer(text="⚠️ Processing...")
 
-            if proc['chfpg'] is not None:
-                self.chfpg=proc['chfpg']
+            m = await ctx.send(embed=embed)
+
+            try:
+                proc = await self.init(self)
+                for k,v in proc.items():
+                    setattr(self,k,v)
+
+            except Exception as e:
+                traceback.print_exc()
+                embed.color=discord.Colour.red()
+                embed.set_footer(text=f"🚫 Error!")
+                await m.edit(embed=embed)
+                return None
+
+            else:
+                await m.delete()
 
         return await self.domsg(ctx)
 
