@@ -1,6 +1,6 @@
-tokens.txt
+token.txt
 *.log
-*.json 
+*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

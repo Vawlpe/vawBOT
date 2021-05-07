@@ -39,7 +39,7 @@ formatTime = time.strftime("%H:%M:%S")
 formatDate = time.strftime("%d/%m/%Y")
 
 logger = logging.getLogger("discord")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(filename="vawbot.log", encoding="utf-8")
 handler.setFormatter(logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s"))
 logger.addHandler(handler)
@@ -122,5 +122,4 @@ for filename in os.listdir("cogs"):
 	if filename.endswith(".py"):
 		client.load_extension(f"cogs.{filename[:-3]}")
 
-tokens = open("tokens.txt", "r").readlines()
-client.run(tokens[0])
+client.run(open("token.txt", "r").readline())

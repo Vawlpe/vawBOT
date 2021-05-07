@@ -39,7 +39,7 @@ class general(commands.Cog):
 
 			# starting to build embed
 			emb = discord.Embed(title='Commands and modules', color=discord.Color.blue(),
-								description=f'Use `{prefix}help <module>` to gain more hot sticky- i mean >.> \"information about that command\"')
+								description=f'Use `{prefix}help <module>` to gain more hot sticky- i mean >.> \"information\" about that command')
 
 			# iterating trough cogs, gathering descriptions
 			cogs_desc = ''
