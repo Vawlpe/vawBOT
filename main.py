@@ -8,17 +8,20 @@ import json
 os.system("")
 
 with open("cfg.json") as f:
-    c = json.load(f)
+    cfg = json.load(f)
+
+with open("credentials.json") as f:
+    credentials = json.load(f)
 
 def get_prefix(bot,msg):
-    if not str(msg.guild.id) in c:
-        cfg=c["default"]
+    if not str(msg.guild.id) in cfg:
+        c=cfg["default"]
     else:
-        cfg=c[str(msg.guild.id)]
+        c=cfg[str(msg.guild.id)]
 
-    allcfg=c["all"]
+    allc=cfg["all"]
 
-    return commands.when_mentioned_or(*(cfg["prefixes"]),*(allcfg["prefixes"]))(bot, msg)
+    return commands.when_mentioned_or(*(c["prefixes"]),*(allc["prefixes"]))(bot, msg)
 
 intents = discord.Intents.all()
 client = commands.Bot(
@@ -122,4 +125,4 @@ for filename in os.listdir("cogs"):
     if filename.endswith(".py"):
         client.load_extension(f"cogs.{filename[:-3]}")
 
-client.run(open("token.txt", "r").readline())
+client.run(credentials["discord_token"])

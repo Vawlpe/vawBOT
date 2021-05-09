@@ -81,9 +81,10 @@ class ReadMenu(menus.Menu):
                         self.currch=i-1
                         break
 
-        if self.extra_fields is not None:
+        if hasattr(self,"extra_fields"):
             for f in self.extra_fields:
-                embed.add_field(**f)
+                if f is not None:
+                    embed.add_field(**f)
 
         embed.set_footer(text=self.footerFormat.format(other=self.footerExtra ,page=self.page, total_pages=self.totalPages))
 

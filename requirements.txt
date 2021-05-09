@@ -11,4 +11,4 @@ git+https://github.com/Rapptz/discord-ext-menus
 hentai
 nekos.py
 PyNekos
-luscious-downloader
+luscious

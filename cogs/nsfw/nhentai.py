@@ -8,6 +8,7 @@ import menus.view as viewmenu
 
 async def nh(menu):
     id=menu.extraProcVars['id']
+    ctx=menu.extraProcVars['ctx']
     # No ID? Send random
     if id is None:
         await ctx.send('No ID passed, getting random doujin...')
@@ -69,7 +70,7 @@ async def nhr(self, ctx, *, id=None):
         'footerFormat':'{other}{page}/{total_pages}',
         'showbtns':[True,False,True]*2,
         'init':nhr_init,
-        'extraProcVars':{'id':id}
+        'extraProcVars':{'id':id,'ctx':ctx}
     }
 
     return await readmenu.ReadMenu().start(ctx, **info)

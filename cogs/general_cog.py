@@ -28,6 +28,11 @@ class general(commands.Cog):
         await ctx.send(f'Pong! {int(self.client.latency*1000)}ms')
 
     @commands.command()
+    @commands.is_owner()
+    async def spam(self, ctx):
+        await ctx.send("** **\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n** **")
+
+    @commands.command()
     # @commands.bot_has_permissions(add_reactions=True,embed_links=True)
     async def help(self, ctx, *input):
         """Shows all modules of the bot"""
